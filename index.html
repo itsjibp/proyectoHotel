@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Reservas - Proyecto Hotel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.bootstrap5.css">
+    
+    <style>
+        /* 1. ¡IMPORTANTE! Cambia 'hotel_fondo.jpg' por el nombre de tu archivo de imagen real. */
+        body {
+            background-image: url('image.png'); 
+            background-size: cover;       
+            background-repeat: no-repeat; 
+            background-attachment: fixed; 
+            background-color: #c51818; 
+        }
+
+        /* Hace el contenido semitransparente para que la imagen se vea, pero el texto sea legible. */
+        .container {
+            background-color: rgba(255, 255, 255, 0.9); 
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+        .card { 
+            margin-bottom: 2rem; 
+            border-left: 5px solid #007bff; 
+            background-color: rgba(255, 255, 255, 0.9); /* Las tarjetas también son semitransparentes */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-5 text-primary"> Gestión del Hotel</h1>
+
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item"><button class="nav-link active" id="clientes-tab" data-bs-toggle="tab" data-bs-target="#clientes" type="button">Clientes</button></li>
+            <li class="nav-item"><button class="nav-link" id="habitaciones-tab" data-bs-toggle="tab" data-bs-target="#habitaciones" type="button">Habitaciones</button></li>
+            <li class="nav-item"><button class="nav-link" id="reservas-tab" data-bs-toggle="tab" data-bs-target="#reservas" type="button">Reservas</button></li>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+            
+            <div class="tab-pane fade show active" id="clientes">
+                <div class="card mt-4">
+                    <div class="card-header bg-primary text-white">Registrar Nuevo Cliente</div>
+                    <div class="card-body">
+                        <form id="form-cliente">
+                            <div class="row">
+                                <div class="col-md-4 mb-3"><label for="cliente-nombre" class="form-label">Nombre</label><input type="text" class="form-control" id="cliente-nombre" required></div>
+                                <div class="col-md-4 mb-3"><label for="cliente-telefono" class="form-label">Teléfono</label><input type="tel" class="form-control" id="cliente-telefono"></div>
+                                <div class="col-md-4 mb-3"><label for="cliente-email" class="form-label">Email</label><input type="email" class="form-control" id="cliente-email" required></div>
+                            </div>
+                            <button type="submit" class="btn btn-success">Guardar Cliente</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">Historial de Clientes</div>
+                    <div class="card-body">
+                        <table id="tabla-clientes" class="table table-striped" style="width:100%">
+                            <thead><tr><th>ID</th><th>Nombre</th><th>Teléfono</th><th>Email</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="habitaciones">
+                <div class="card mt-4">
+                    <div class="card-header bg-primary text-white">Registrar Nueva Habitación</div>
+                    <div class="card-body">
+                        <form id="form-habitacion">
+                            <div class="row">
+                                <div class="col-md-3 mb-3"><label for="hab-numero" class="form-label">Número</label><input type="text" class="form-control" id="hab-numero" required></div>
+                                <div class="col-md-3 mb-3"><label for="hab-tipo" class="form-label">Tipo</label><input type="text" class="form-control" id="hab-tipo" required></div>
+                                <div class="col-md-3 mb-3"><label for="hab-precio" class="form-label">Precio</label><input type="number" class="form-control" id="hab-precio" step="0.01" min="0" required></div>
+                                <div class="col-md-3 mb-3"><label for="hab-estado" class="form-label">Estado</label>
+                                    <select class="form-select" id="hab-estado">
+                                        <option value="disponible">Disponible</option>
+                                        <option value="ocupada">Ocupada</option>
+                                        <option value="mantenimiento">Mantenimiento</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success">Guardar Habitación</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">Listado de Habitaciones</div>
+                    <div class="card-body">
+                        <table id="tabla-habitaciones" class="table table-striped" style="width:100%">
+                            <thead><tr><th>Número</th><th>Tipo</th><th>Precio</th><th>Estado</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="reservas">
+                <div class="card mt-4">
+                    <div class="card-header bg-primary text-white">Registrar Nueva Reserva</div>
+                    <div class="card-body">
+                        <form id="form-reserva">
+                            <div class="row">
+                                <div class="col-md-3 mb-3"><label for="res-id-cliente" class="form-label">ID Cliente</label><input type="text" class="form-control" id="res-id-cliente" required></div>
+                                <div class="col-md-3 mb-3"><label for="res-id-habitacion" class="form-label">ID Habitación</label><input type="text" class="form-control" id="res-id-habitacion" required></div>
+                                <div class="col-md-3 mb-3"><label for="res-fecha-entrada" class="form-label">Fecha Entrada</label><input type="date" class="form-control" id="res-fecha-entrada" required></div>
+                                <div class="col-md-3 mb-3"><label for="res-fecha-salida" class="form-label">Fecha Salida</label><input type="date" class="form-control" id="res-fecha-salida" required></div>
+                            </div>
+                            <button type="submit" class="btn btn-success">Guardar Reserva</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">Historial de Reservas</div>
+                    <div class="card-body">
+                        <table id="tabla-reservas" class="table table-striped" style="width:100%">
+                            <thead><tr><th>ID</th><th>Cliente ID</th><th>Habitación ID</th><th>Entrada</th><th>Salida</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div> </div> 
+    
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/2.3.4/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.3.4/js/dataTables.bootstrap5.js"></script>
+    
+    <script>
+        // script.js - Lógica del Frontend para Proyecto Hotel (VERSIÓN FINAL Y CORREGIDA)
+
+        $(document).ready(function() {
+            // URL base de tu API, donde corre tu servidor Node.js
+            const API_URL = 'http://localhost:3000';
+
+            // Inicializar DataTables
+            const tablaClientes = $('#tabla-clientes').DataTable();
+            const tablaHabitaciones = $('#tabla-habitaciones').DataTable();
+            const tablaReservas = $('#tabla-reservas').DataTable();
+
+            // ----------------------------------------------------
+            //  Funciones de CARGA (GET)
+            // ----------------------------------------------------
+
+            function cargarClientes() {
+                $.ajax({
+                    url: `${API_URL}/clientes`,
+                    method: 'GET',
+                    success: function(data) {
+                        tablaClientes.clear();
+                        data.forEach(cliente => {
+                            tablaClientes.row.add([cliente.id, cliente.nombre, cliente.telefono, cliente.email]);
+                        });
+                        tablaClientes.draw();
+                    },
+                    error: (err) => console.error("Error al cargar clientes.", err)
+                });
+            }
+
+            function cargarHabitaciones() {
+                $.ajax({
+                    url: `${API_URL}/habitaciones`,
+                    method: 'GET',
+                    success: function(data) {
+                        tablaHabitaciones.clear();
+                        data.forEach(hab => {
+                            tablaHabitaciones.row.add([hab.numero, hab.tipo, `$${parseFloat(hab.precio).toFixed(2)}`, hab.estado]);
+                        });
+                        tablaHabitaciones.draw();
+                    },
+                    error: (err) => console.error("Error al cargar habitaciones.", err)
+                });
+            }
+
+            function cargarReservas() {
+                $.ajax({
+                    url: `${API_URL}/reservas`,
+                    method: 'GET',
+                    success: function(data) {
+                        tablaReservas.clear();
+                        data.forEach(reserva => {
+                            tablaReservas.row.add([reserva.id, reserva.id_cliente, reserva.id_habitacion, reserva.fecha_entrada, reserva.fecha_salida]);
+                        });
+                        tablaReservas.draw();
+                    },
+                    error: (err) => console.error("Error al cargar reservas.", err)
+                });
+            }
+
+            // ----------------------------------------------------
+            //  Eventos de REGISTRO (POST)
+            // ----------------------------------------------------
+
+            // Evento para Registrar Cliente
+            $('#form-cliente').on('submit', function(e) {
+                e.preventDefault();
+                const nuevoCliente = {
+                    nombre: $('#cliente-nombre').val(),
+                    telefono: $('#cliente-telefono').val(),
+                    email: $('#cliente-email').val()
+                };
+
+                $.ajax({
+                    url: `${API_URL}/cliente`,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(nuevoCliente),
+                    success: function(response) {
+                        alert('Cliente registrado con éxito.');
+                        $('#form-cliente')[0].reset();
+                        cargarClientes();
+                    },
+                    error: (err) => alert('Error al registrar cliente. Revisa tu backend.')
+                });
+            });
+            
+            // Evento para Registrar Habitación
+            $('#form-habitacion').on('submit', function(e) {
+                e.preventDefault();
+                const nuevaHab = {
+                    numero: $('#hab-numero').val(),
+                    tipo: $('#hab-tipo').val(),
+                    precio: parseFloat($('#hab-precio').val()),
+                    estado: $('#hab-estado').val()
+                };
+
+                $.ajax({
+                    url: `${API_URL}/habitacion`,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(nuevaHab),
+                    success: function(response) {
+                        alert('Habitación registrada con éxito.');
+                        $('#form-habitacion')[0].reset();
+                        cargarHabitaciones();
+                    },
+                    error: (err) => alert('Error al registrar habitación. Revisa tu backend.')
+                });
+            });
+
+            // Evento para Registrar Reserva (CORREGIDO)
+            $('#form-reserva').on('submit', function(e) {
+                e.preventDefault();
+                const nuevaReserva = {
+                    // Usamos .val() sin parseInt() para compatibilidad con tipos de dato
+                    id_cliente: $('#res-id-cliente').val(), 
+                    id_habitacion: $('#res-id-habitacion').val(), 
+                    fecha_entrada: $('#res-fecha-entrada').val(),
+                    fecha_salida: $('#res-fecha-salida').val()
+                };
+
+                $.ajax({
+                    url: `${API_URL}/reserva`,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(nuevaReserva),
+                    success: function(response) {
+                        alert('Reserva registrada con éxito.');
+                        $('#form-reserva')[0].reset();
+                        cargarReservas();
+                    },
+                    error: (err) => alert('Error al registrar reserva. Revisa tu backend y verifica que los IDs de Cliente y Habitación existan.')
+                });
+            });
+
+
+            // ----------------------------------------------------
+            //  Carga inicial de datos al iniciar la página
+            // ----------------------------------------------------
+            cargarClientes();
+            cargarHabitaciones();
+            cargarReservas();
+        });
+    </script>
+</body>
+</html>
