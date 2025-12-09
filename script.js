@@ -1,4 +1,4 @@
-// script.js - Lógica del Frontend para Proyecto Hotel (VERSIÓN FINAL Y CORREGIDA)
+
 
 $(document).ready(function() {
     // URL base de tu API, donde corre tu servidor Node.js
@@ -141,4 +141,5 @@ $(document).ready(function() {
     cargarClientes();
     cargarHabitaciones();
     cargarReservas();
+
 });
